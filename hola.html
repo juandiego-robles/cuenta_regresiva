@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progreso del Año 2025</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .progress-container {
+            width: 80%;
+            background-color: #eee;
+            border-radius: 10px;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 30px;
+            background-color: #000;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            font-weight: bold;
+            border-radius: 10px;
+            width: 0%;
+        }
+        #fecha-actual {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Progreso del Año 2025</h1>
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar">0%</div>
+    </div>
+    <div id="fecha-actual"></div>
+    <script>
+        function calcularProgresoAnual() {
+            const inicioAño = new Date('2025-01-01T00:00:00');
+            const ahora = new Date();
+            const esBisiesto = (2025 % 4 === 0 && 2025 % 100 !== 0) || (2025 % 400 === 0);
+            const totalDias = esBisiesto ? 366 : 365;
+            
+            if (ahora.getFullYear() !== 2025) {
+                document.getElementById("progress-bar").innerText = "Esperando 2025...";
+                return;
+            }
+            
+            const diaDelAño = Math.floor((ahora - inicioAño) / (1000 * 60 * 60 * 24)) + 1;
+            const porcentaje = (diaDelAño / totalDias) * 100;
+            
+            document.getElementById("progress-bar").style.width = porcentaje.toFixed(2) + "%";
+            document.getElementById("progress-bar").innerText = porcentaje.toFixed(2) + "%";
+        }
+        
+        function mostrarFechaActual() {
+            const ahora = new Date();
+            const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+            const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+            const diaSemana = diasSemana[ahora.getDay()];
+            const dia = ahora.getDate();
+            const mes = meses[ahora.getMonth()];
+            document.getElementById("fecha-actual").innerText = `Hoy: ${diaSemana} ${dia} de ${mes}`;
+        }
+        
+        calcularProgresoAnual();
+        mostrarFechaActual();
+        setInterval(calcularProgresoAnual, 60000); // Actualiza cada minuto
+    </script>
+</body>
+</html>
