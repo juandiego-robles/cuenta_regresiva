@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcriptor de Voz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #transcription {
+            width: 80%;
+            height: 200px;
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            overflow-y: auto;
+        }
+        button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Transcriptor de Voz</h1>
+    <button id="startBtn">🎤 Iniciar Transcripción</button>
+    <button id="stopBtn">⏹️ Detener</button>
+    <button id="summarizeBtn">📄 Resumir</button>
+    <div id="transcription"></div>
+    
+    <script>
+        let recognition;
+        let transcript = "";
+
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'es-ES';
+
+            recognition.onresult = (event) => {
+                transcript = "";
+                for (let i = 0; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript + " ";
+                }
+                document.getElementById("transcription").innerText = transcript;
+            };
+        } else {
+            alert("Tu navegador no soporta la API de reconocimiento de voz.");
+        }
+
+        document.getElementById("startBtn").addEventListener("click", () => {
+            recognition.start();
+        });
+
+        document.getElementById("stopBtn").addEventListener("click", () => {
+            recognition.stop();
+        });
+
+        document.getElementById("summarizeBtn").addEventListener("click", () => {
+            fetch("https://api.meaningcloud.com/summarization-1.0", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({
+                    key: "TU_API_KEY",
+                    txt: transcript,
+                    sentences: 3
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert("Resumen: " + data.summary);
+            })
+            .catch(error => console.error("Error al resumir:", error));
+        });
+    </script>
+</body>
+</html>
